@@ -3,11 +3,11 @@
 
 // à tester !!
 
-int	strlcat(char *dst, char *src, unsigned int size)
+int	ft_strlcat(char *dst, char *src, unsigned int size)
 {
 	int	dstlen;
 	int	i;
-	int	j;
+	unsigned int	j;
 
 	dstlen = ft_strlen(dst);
 	i = size - dstlen;

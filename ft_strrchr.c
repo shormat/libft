@@ -13,5 +13,8 @@ char *ft_strrchr(char *s, int c)
         s++;
     }
 
+    if(*s == c)
+        return s;
+
     return last_occurence;
 }

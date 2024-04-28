@@ -5,42 +5,23 @@
  * Code à refaire..
  * */
 
-char *ft_strnstr(char *dst, char *src, int len)
+char *ft_strnstr(char *haystack, char *needle, size_t len)
 {
-    char *p_src;
-    char *p_dst;
-    char *ret;
-    int lenn;
+    size_t needlelen;
 
-    p_src = src;
-    p_dst = dst;
-    ret = 0;
-    lenn = len;
+    if(!(*needle))
+        return haystack;
 
-    if(!dst)
-        return src;
+    needlelen = ft_strlen(needle);
 
-    while(*p_src)
+    while(*haystack && len > needlelen-1)
     {
-        if(*p_src == *p_dst && lenn--)
-        {
-            ret = p_src;
-            p_src++;
-            p_dst++;
-            continue;
-        }
-        else
-        {
-            ret = 0;
-            p_dst = dst;
-            lenn = len;
-        }
-        
-        if(!*p_dst)
-            break;
+        if(!ft_memcmp(haystack, needle, len))
+            return --haystack;
 
-        p_src++;
+        haystack++;
+        len--;
     }
 
-    return ret;
+    return NULL; 
 }

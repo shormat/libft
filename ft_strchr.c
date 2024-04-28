@@ -17,5 +17,8 @@ char	*ft_strchr(char *s, int c)
 		s++;
 	}
 
+    if(*s == c)
+        return s;
+        
 	return (occurence);
 }
