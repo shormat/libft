@@ -1,24 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlcat.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shormat <shormat@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/30 17:22:45 by shormat           #+#    #+#             */
+/*   Updated: 2024/04/30 17:25:09 by shormat          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "libft.h"
 
-// à tester !!
-
-int	ft_strlcat(char *dst, char *src, unsigned int size)
+int	ft_strlcat(char *dst, char *src, size_t size)
 {
-	int	dstlen;
-	int	i;
-	unsigned int	j;
+	size_t	dstlen;
+	size_t	srclen;
 
 	dstlen = ft_strlen(dst);
-	i = size - dstlen;
-	j = 0;
-	if (!i)
-		return (dstlen + ft_strlen(src));
-	while (src[j] && j < size - 1)
-	{
-		dst[i + j] = src[j];
-		j++;
-	}
-	dst[i + j] = 0;
-	return (dstlen + ft_strlen(src));
+	srclen = ft_strlen(src);
+	if (size <= dstlen)
+		return (size + srclen);
+	ft_strlcpy(dst + dstlen, src, size - dstlen);
+	return (dstlen + srclen);
 }
