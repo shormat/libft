@@ -6,102 +6,104 @@
 /*   By: shormat <shormat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:22:26 by shormat           #+#    #+#             */
-/*   Updated: 2024/04/30 17:24:56 by shormat          ###   ########.fr       */
+/*   Updated: 2024/04/30 23:42:06 by shormat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	count_occ(char const *s, char c)
+static size_t	count_occ(const char *s, char c)
 {
-	int	occ;
-	int	inside_word;
+	size_t	count;
+	int		inside_word;
 
-	occ = 0;
+	count = 0;
 	inside_word = 0;
 	while (*s)
 	{
 		if (*s == c)
 		{
-			inside_word = 0;
+			if (inside_word)
+			{
+				inside_word = 0;
+				count++;
+			}
 		}
 		else
 		{
 			if (!inside_word)
-			{
-				occ++;
 				inside_word = 1;
-			}
 		}
 		s++;
 	}
-	return (occ);
+	if (inside_word)
+		count++;
+	return (count);
 }
 
-static int	ft_substrlen(char const *s, char c)
+static size_t	get_sublensz(char const *s, char c)
 {
-	int	ret;
+	size_t	ret;
 
 	ret = 0;
-	while (*s != c && *s)
+	while (*s && *s != c)
 	{
-		ret++;
 		s++;
+		ret++;
 	}
 	return (ret);
 }
 
-static void	ft_free(char **ret, size_t i)
+static void	free_arr(char **t, size_t i)
 {
+	if (!t)
+		return ;
 	while (i > 0)
 	{
-		free(ret[--i]);
+		free(t[--i]);
 	}
-	free(ret);
+	free(t);
 }
 
-static void	ft_splitter(char **ret, char const *s, char c, size_t occ)
+static int	fill_arr(char **ret, const char *s, size_t i, size_t sublen)
 {
-	size_t	i;
-	size_t	substrlen;
-
-	i = 0;
-	while (*s && i < occ)
+	ret[i] = malloc(sizeof(char) * (sublen + 1));
+	if (!ret[i])
 	{
-		substrlen = ft_substrlen(s, c);
-		ret[i] = malloc(sizeof(char) * (substrlen + 1));
-		if (!ret[i])
-		{
-			ft_free(ret, i);
-			return ;
-		}
-		ft_memcpy((void *)ret[i], (void *)s, substrlen);
-		ret[i][substrlen] = '\0';
-		s += substrlen;
-		while (*s == c) // Skip consecutive delimiters
-			s++;
-		i++;
+		free_arr(ret, i);
+		return (0);
 	}
-	ret[occ] = NULL;
+	ft_memcpy((void *)ret[i], (void *)s, sublen + 1);
+	ret[i][sublen] = '\0';
+	return (1);
 }
 
 char	**ft_split(char const *s, char c)
 {
-	size_t	occ;
+	char	**ret;
+	size_t	len;
+	size_t	sublen;
+	size_t	i;
 
 	if (!s)
 		return (NULL);
-	occ = count_occ(s, c);
-	char **ret = malloc(sizeof(char *) * (occ + 2));
-		// One extra for empty string and one for NULL terminator
+	len = count_occ(s, c);
+	ret = malloc(sizeof(char *) * (len + 1));
 	if (!ret)
 		return (NULL);
-	ft_splitter(ret, s, c, occ);
-	if (!ret[0]) // If splitting failed, free memory and return NULL
+	i = 0;
+	while (*s)
 	{
-		free(ret);
-		return (NULL);
+		if (*s != c)
+		{
+			sublen = get_sublensz(s, c);
+			if (!fill_arr(ret, s, i++, sublen))
+				return (NULL);
+			s += sublen;
+		}
+        else
+		    s++;
 	}
-	ret[occ + 1] = NULL; // NULL terminate the array
+	ret[len] = NULL;
 	return (ret);
 }
