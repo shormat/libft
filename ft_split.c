@@ -6,7 +6,7 @@
 /*   By: shormat <shormat@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:22:26 by shormat           #+#    #+#             */
-/*   Updated: 2024/04/30 23:42:06 by shormat          ###   ########.fr       */
+/*   Updated: 2024/05/01 10:18:11 by shormat          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,32 @@ static void	free_arr(char **t, size_t i)
 	free(t);
 }
 
-static int	fill_arr(char **ret, const char *s, size_t i, size_t sublen)
+static int	fill_arr(char **ret, size_t len, const char *s, char c)
 {
-	ret[i] = malloc(sizeof(char) * (sublen + 1));
-	if (!ret[i])
+	size_t	sublen;
+	size_t	i;
+
+	i = 0;
+	while (*s)
 	{
-		free_arr(ret, i);
-		return (0);
+		if (*s != c)
+		{
+			sublen = get_sublensz(s, c);
+			ret[i] = malloc(sizeof(char) * (sublen + 1));
+			if (!ret[i])
+			{
+				free_arr(ret, i);
+				return (0);
+			}
+			ft_memcpy((void *)ret[i], (void *)s, sublen + 1);
+			ret[i][sublen] = '\0';
+			i++;
+			s += sublen;
+		}
+		else
+			s++;
 	}
-	ft_memcpy((void *)ret[i], (void *)s, sublen + 1);
-	ret[i][sublen] = '\0';
+	ret[len] = NULL;
 	return (1);
 }
 
@@ -82,8 +98,6 @@ char	**ft_split(char const *s, char c)
 {
 	char	**ret;
 	size_t	len;
-	size_t	sublen;
-	size_t	i;
 
 	if (!s)
 		return (NULL);
@@ -91,19 +105,7 @@ char	**ft_split(char const *s, char c)
 	ret = malloc(sizeof(char *) * (len + 1));
 	if (!ret)
 		return (NULL);
-	i = 0;
-	while (*s)
-	{
-		if (*s != c)
-		{
-			sublen = get_sublensz(s, c);
-			if (!fill_arr(ret, s, i++, sublen))
-				return (NULL);
-			s += sublen;
-		}
-        else
-		    s++;
-	}
-	ret[len] = NULL;
+	if (!fill_arr(ret, len, s, c))
+		return (NULL);
 	return (ret);
 }
